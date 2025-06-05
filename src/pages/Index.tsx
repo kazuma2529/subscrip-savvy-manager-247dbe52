@@ -1,8 +1,10 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Bell, Calendar, CreditCard } from 'lucide-react';
+import { Plus, Bell, Calendar, CreditCard, BarChart3 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import SubscriptionCard from '@/components/SubscriptionCard';
 import AddSubscriptionModal from '@/components/AddSubscriptionModal';
 import MonthlySpendingChart from '@/components/MonthlySpendingChart';
@@ -87,6 +89,12 @@ const Index = () => {
             <h1 className="text-4xl font-bold text-white mb-2">SubMemo</h1>
             <p className="text-slate-300">あなたのサブスクリプションを一元管理</p>
           </div>
+          <Link to="/monthly-spending">
+            <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold">
+              <BarChart3 className="w-4 h-4 mr-2" />
+              月別支出分析
+            </Button>
+          </Link>
         </div>
 
         {/* Alerts */}
@@ -159,7 +167,7 @@ const Index = () => {
         </div>
 
         {/* Category Filter and Add Button */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
           <div className="flex flex-wrap gap-2">
             {categories.map(category => (
               <Button
@@ -178,7 +186,7 @@ const Index = () => {
           </div>
           <Button 
             onClick={() => setIsModalOpen(true)}
-            className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-semibold"
+            className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-semibold lg:ml-4"
           >
             <Plus className="w-4 h-4 mr-2" />
             新規登録
