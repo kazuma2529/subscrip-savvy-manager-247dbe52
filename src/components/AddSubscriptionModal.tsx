@@ -198,7 +198,7 @@ const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ isOpen, onC
               type="button" 
               variant="outline" 
               onClick={onClose}
-              className="flex-1 border-slate-600 text-slate-300 hover:bg-slate-700"
+              className="flex-1 border-slate-600 text-gray-800 hover:bg-slate-700 hover:text-gray-800 bg-white"
             >
               キャンセル
             </Button>
