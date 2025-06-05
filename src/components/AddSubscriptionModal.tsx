@@ -184,6 +184,7 @@ const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ isOpen, onC
                     mode="single"
                     selected={formData.nextPayment || getDefaultDate()}
                     onSelect={(date) => setFormData({ ...formData, nextPayment: date })}
+                    defaultMonth={getDefaultDate()}
                     initialFocus
                     className="text-white"
                   />
