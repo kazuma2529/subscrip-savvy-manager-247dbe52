@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -49,6 +48,52 @@ const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState('すべて');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [subscriptions, setSubscriptions] = useState(mockSubscriptions);
+
+  // トライアル期間終了チェック機能
+  useEffect(() => {
+    const checkAndUpdateTrialSubscriptions = () => {
+      const today = new Date();
+      const updatedSubscriptions = subscriptions.map(sub => {
+        if (sub.isTrialPeriod && sub.trialEndDate) {
+          const trialEndDate = new Date(sub.trialEndDate);
+          // トライアルが終了している場合
+          if (today > trialEndDate) {
+            console.log(`トライアル終了を検知: ${sub.name}`);
+            // トライアル終了日の1ヶ月後を次回支払い日に設定
+            const nextPaymentDate = new Date(trialEndDate);
+            nextPaymentDate.setMonth(nextPaymentDate.getMonth() + 1);
+            
+            return {
+              ...sub,
+              isTrialPeriod: false,
+              trialEndDate: undefined,
+              nextPayment: nextPaymentDate.toISOString().split('T')[0]
+            };
+          }
+        }
+        return sub;
+      });
+      
+      // 変更があった場合のみ状態を更新
+      const hasChanges = updatedSubscriptions.some((sub, index) => 
+        sub.isTrialPeriod !== subscriptions[index].isTrialPeriod ||
+        sub.nextPayment !== subscriptions[index].nextPayment
+      );
+      
+      if (hasChanges) {
+        console.log('トライアル期間終了による自動更新を実行');
+        setSubscriptions(updatedSubscriptions);
+      }
+    };
+
+    // 初回チェック
+    checkAndUpdateTrialSubscriptions();
+    
+    // 定期的にチェック（24時間ごと）
+    const interval = setInterval(checkAndUpdateTrialSubscriptions, 24 * 60 * 60 * 1000);
+    
+    return () => clearInterval(interval);
+  }, [subscriptions]);
 
   const filteredSubscriptions = selectedCategory === 'すべて' 
     ? subscriptions 
