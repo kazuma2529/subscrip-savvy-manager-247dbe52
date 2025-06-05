@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -60,7 +59,7 @@ const Index = () => {
   const totalMonthlySpend = paidSubscriptions.reduce((total, sub) => total + sub.price, 0);
   const totalTrialValue = trialSubscriptions.reduce((total, sub) => total + sub.price, 0);
 
-  // サブスクリプションを並び替え：通常サブスクを支払い予定日が近い順に並べ、その後に無料トライアル
+  // サブスクリプションを並び替え：支払い予定日の近い順にソート、無料トライアルは後
   const sortedSubscriptions = [...filteredSubscriptions].sort((a, b) => {
     // 無料トライアルは後ろに配置
     if (a.isTrialPeriod && !b.isTrialPeriod) return 1;
@@ -88,13 +87,6 @@ const Index = () => {
             <h1 className="text-4xl font-bold text-white mb-2">SubMemo</h1>
             <p className="text-slate-300">あなたのサブスクリプションを一元管理</p>
           </div>
-          <Button 
-            onClick={() => setIsModalOpen(true)}
-            className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-semibold"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            新規登録
-          </Button>
         </div>
 
         {/* Alerts */}
@@ -166,22 +158,31 @@ const Index = () => {
           <CalendarView subscriptions={subscriptions} />
         </div>
 
-        {/* Category Filter */}
-        <div className="flex flex-wrap gap-2 mb-6">
-          {categories.map(category => (
-            <Button
-              key={category}
-              variant={selectedCategory === category ? "default" : "outline"}
-              size="sm"
-              onClick={() => setSelectedCategory(category)}
-              className={selectedCategory === category 
-                ? "bg-purple-500 hover:bg-purple-600 text-white" 
-                : "text-black border-white/30 hover:bg-white/10 hover:text-white bg-white"
-              }
-            >
-              {category}
-            </Button>
-          ))}
+        {/* Category Filter and Add Button */}
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div className="flex flex-wrap gap-2">
+            {categories.map(category => (
+              <Button
+                key={category}
+                variant={selectedCategory === category ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedCategory(category)}
+                className={selectedCategory === category 
+                  ? "bg-purple-500 hover:bg-purple-600 text-white" 
+                  : "text-black border-white/30 hover:bg-white/10 hover:text-white bg-white"
+                }
+              >
+                {category}
+              </Button>
+            ))}
+          </div>
+          <Button 
+            onClick={() => setIsModalOpen(true)}
+            className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-semibold"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            新規登録
+          </Button>
         </div>
 
         {/* Main Content Grid */}
