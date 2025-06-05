@@ -34,6 +34,13 @@ const CalendarView: React.FC<CalendarViewProps> = ({ subscriptions }) => {
     return paymentDate >= startOfMonth && paymentDate <= endOfMonth;
   });
 
+  // 無料トライアル終了日も取得
+  const thisMonthTrialEnds = subscriptions.filter(sub => {
+    if (!sub.isTrialPeriod || !sub.trialEndDate) return false;
+    const trialEndDate = new Date(sub.trialEndDate);
+    return trialEndDate >= startOfMonth && trialEndDate <= endOfMonth;
+  });
+
   // 支払い予定日順にソート
   const sortedPayments = [...thisMonthPayments].sort((a, b) => {
     const dateA = new Date(a.nextPayment);
@@ -50,16 +57,33 @@ const CalendarView: React.FC<CalendarViewProps> = ({ subscriptions }) => {
     });
   };
 
-  // カレンダーに支払い日をマーク
+  // 日付ごとの無料トライアル終了をグループ化
+  const getTrialEndsForDate = (date: Date) => {
+    const dateStr = date.toISOString().split('T')[0];
+    return thisMonthTrialEnds.filter(sub => {
+      const trialEndDateStr = new Date(sub.trialEndDate!).toISOString().split('T')[0];
+      return trialEndDateStr === dateStr;
+    });
+  };
+
+  // カレンダーに支払い日と無料トライアル終了日をマーク
   const paymentDates = thisMonthPayments.map(sub => new Date(sub.nextPayment));
+  const trialEndDates = thisMonthTrialEnds.map(sub => new Date(sub.trialEndDate!));
 
   const modifiers = {
     payment: paymentDates,
+    trialEnd: trialEndDates,
   };
 
   const modifiersStyles = {
     payment: {
       backgroundColor: '#f97316',
+      color: 'white',
+      borderRadius: '50%',
+      fontWeight: 'bold',
+    },
+    trialEnd: {
+      backgroundColor: '#60a5fa',
       color: 'white',
       borderRadius: '50%',
       fontWeight: 'bold',
@@ -87,6 +111,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ subscriptions }) => {
                   date.setDate(date.getDate() - startOfMonth.getDay() + i);
                   const isCurrentMonth = date.getMonth() === now.getMonth();
                   const hasPayment = getPaymentsForDate(date).length > 0;
+                  const hasTrialEnd = getTrialEndsForDate(date).length > 0;
                   
                   return (
                     <div
@@ -95,6 +120,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({ subscriptions }) => {
                         isCurrentMonth 
                           ? hasPayment 
                             ? 'bg-orange-500 text-white font-bold'
+                            : hasTrialEnd
+                            ? 'bg-blue-400 text-white font-bold'
                             : 'text-white/70'
                           : 'text-white/30'
                       }`}
@@ -125,9 +152,9 @@ const CalendarView: React.FC<CalendarViewProps> = ({ subscriptions }) => {
               {selectedDate && (
                 <div className="mt-4">
                   <h4 className="font-semibold mb-2">
-                    {selectedDate.getMonth() + 1}月{selectedDate.getDate()}日の支払い
+                    {selectedDate.getMonth() + 1}月{selectedDate.getDate()}日の予定
                   </h4>
-                  {getPaymentsForDate(selectedDate).length > 0 ? (
+                  {(getPaymentsForDate(selectedDate).length > 0 || getTrialEndsForDate(selectedDate).length > 0) ? (
                     <div className="space-y-2">
                       {getPaymentsForDate(selectedDate).map(sub => (
                         <div key={sub.id} className="p-3 border rounded-lg bg-orange-50">
@@ -135,55 +162,67 @@ const CalendarView: React.FC<CalendarViewProps> = ({ subscriptions }) => {
                             <span className="font-medium">{sub.name}</span>
                             <span className="font-bold">¥{sub.price.toLocaleString()}</span>
                           </div>
+                          <div className="text-sm text-gray-600">支払い予定</div>
+                        </div>
+                      ))}
+                      {getTrialEndsForDate(selectedDate).map(sub => (
+                        <div key={sub.id} className="p-3 border rounded-lg bg-blue-50">
+                          <div className="flex items-center justify-between">
+                            <span className="font-medium">{sub.name}</span>
+                            <span className="font-bold">¥{sub.price.toLocaleString()}</span>
+                          </div>
+                          <div className="text-sm text-blue-600">無料トライアル終了</div>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-gray-500 text-sm">この日に支払い予定はありません</p>
+                    <p className="text-gray-500 text-sm">この日に予定はありません</p>
                   )}
                 </div>
               )}
             </div>
             
             {/* 右側：支払い一覧 */}
-            <div className="flex flex-col">
+            <div className="flex flex-col h-full">
               <h3 className="text-lg font-semibold mb-4">今月の支払い予定</h3>
-              <div className="space-y-3 overflow-y-auto">
-                {sortedPayments.map(sub => {
-                  const paymentDate = new Date(sub.nextPayment);
-                  const day = paymentDate.getDate();
-                  
-                  return (
-                    <div key={sub.id} className="flex items-center justify-between p-4 rounded-lg border bg-gray-50 hover:bg-gray-100 transition-colors">
-                      <div className="flex items-center space-x-4">
-                        <div className="text-lg font-bold text-orange-600 w-8">
-                          {day}日
+              <div className="flex-1 overflow-y-auto">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 h-fit">
+                  {sortedPayments.map(sub => {
+                    const paymentDate = new Date(sub.nextPayment);
+                    const day = paymentDate.getDate();
+                    
+                    return (
+                      <div key={sub.id} className="flex items-center justify-between p-3 rounded-lg border bg-gray-50 hover:bg-gray-100 transition-colors h-fit">
+                        <div className="flex items-center space-x-3">
+                          <div className="text-sm font-bold text-orange-600 w-6">
+                            {day}日
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="font-medium text-gray-900 text-sm truncate">{sub.name}</div>
+                            <div className="text-xs text-gray-500 truncate">{sub.cardName}</div>
+                          </div>
                         </div>
-                        <div>
-                          <div className="font-medium text-gray-900">{sub.name}</div>
-                          <div className="text-sm text-gray-500">{sub.cardName}</div>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="font-bold text-lg">¥{sub.price.toLocaleString()}</div>
-                        <Badge variant="outline" className="text-xs">
-                          {sub.category}
-                        </Badge>
-                        {sub.isTrialPeriod && (
-                          <Badge className="ml-1 bg-blue-100 text-blue-800 text-xs">
-                            無料トライアル
+                        <div className="text-right flex-shrink-0">
+                          <div className="font-bold text-sm">¥{sub.price.toLocaleString()}</div>
+                          <Badge variant="outline" className="text-xs">
+                            {sub.category}
                           </Badge>
-                        )}
+                          {sub.isTrialPeriod && (
+                            <Badge className="ml-1 bg-blue-100 text-blue-800 text-xs">
+                              トライアル
+                            </Badge>
+                          )}
+                        </div>
                       </div>
+                    );
+                  })}
+                  
+                  {sortedPayments.length === 0 && (
+                    <div className="col-span-full text-center py-8 text-gray-500">
+                      今月の支払い予定はありません
                     </div>
-                  );
-                })}
-                
-                {sortedPayments.length === 0 && (
-                  <div className="text-center py-8 text-gray-500">
-                    今月の支払い予定はありません
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           </div>

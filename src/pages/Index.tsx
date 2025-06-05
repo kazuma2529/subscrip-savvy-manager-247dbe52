@@ -60,9 +60,9 @@ const Index = () => {
   const totalMonthlySpend = paidSubscriptions.reduce((total, sub) => total + sub.price, 0);
   const totalTrialValue = trialSubscriptions.reduce((total, sub) => total + sub.price, 0);
 
-  // サブスクリプションを支払い予定日が近い順に並べ、無料トライアルを後ろに配置
+  // サブスクリプションを並び替え：通常サブスクを支払い予定日が近い順に並べ、その後に無料トライアル
   const sortedSubscriptions = [...filteredSubscriptions].sort((a, b) => {
-    // 無料トライアルでないものを優先
+    // 無料トライアルは後ろに配置
     if (a.isTrialPeriod && !b.isTrialPeriod) return 1;
     if (!a.isTrialPeriod && b.isTrialPeriod) return -1;
     
