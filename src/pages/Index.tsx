@@ -122,12 +122,12 @@ const Index = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="bg-white/10 backdrop-blur-lg border-white/20">
+          <Card className="bg-white/10 backdrop-blur-lg border-white/20 h-48 flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-white">月額合計</CardTitle>
               <CreditCard className="h-4 w-4 text-purple-400" />
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex-1 flex flex-col justify-center">
               <div className="text-2xl font-bold text-white">¥{totalMonthlySpend.toLocaleString()}</div>
               <p className="text-xs text-slate-300">
                 年額 ¥{(totalMonthlySpend * 12).toLocaleString()}
@@ -142,12 +142,12 @@ const Index = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/10 backdrop-blur-lg border-white/20">
+          <Card className="bg-white/10 backdrop-blur-lg border-white/20 h-48 flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-white">登録サービス数</CardTitle>
               <Plus className="h-4 w-4 text-blue-400" />
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex-1 flex flex-col justify-center">
               <div className="text-2xl font-bold text-white">{paidSubscriptions.length}</div>
               <p className="text-xs text-slate-300">
                 有料サブスク
