@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -175,7 +176,7 @@ const Index = () => {
               onClick={() => setSelectedCategory(category)}
               className={selectedCategory === category 
                 ? "bg-purple-500 hover:bg-purple-600 text-white" 
-                : "text-white border-white/30 hover:bg-white/10"
+                : "text-black border-white/30 hover:bg-white/10 hover:text-white bg-white"
               }
             >
               {category}
