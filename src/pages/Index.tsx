@@ -52,7 +52,12 @@ const Index = () => {
     ? subscriptions 
     : subscriptions.filter(sub => sub.category === selectedCategory);
 
-  const totalMonthlySpend = subscriptions.reduce((total, sub) => total + sub.price, 0);
+  // 有料サブスクと無料トライアルを分ける
+  const paidSubscriptions = subscriptions.filter(sub => !sub.isTrialPeriod);
+  const trialSubscriptions = subscriptions.filter(sub => sub.isTrialPeriod);
+
+  const totalMonthlySpend = paidSubscriptions.reduce((total, sub) => total + sub.price, 0);
+  const totalTrialValue = trialSubscriptions.reduce((total, sub) => total + sub.price, 0);
 
   const upcomingAlerts = subscriptions.filter(sub => {
     const today = new Date();
@@ -67,7 +72,7 @@ const Index = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-white mb-2">サブスク管理</h1>
+            <h1 className="text-4xl font-bold text-white mb-2">SubMemo</h1>
             <p className="text-slate-300">あなたのサブスクリプションを一元管理</p>
           </div>
           <Button 
@@ -85,7 +90,7 @@ const Index = () => {
             <CardHeader>
               <CardTitle className="flex items-center text-orange-800">
                 <Bell className="w-5 h-5 mr-2" />
-                支払い予定のお知らせ
+                直近の支払い予報
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -115,6 +120,13 @@ const Index = () => {
               <p className="text-xs text-slate-300">
                 年額 ¥{(totalMonthlySpend * 12).toLocaleString()}
               </p>
+              {trialSubscriptions.length > 0 && (
+                <div className="mt-2 pt-2 border-t border-white/20">
+                  <p className="text-xs text-blue-300">
+                    無料トライアル: ¥{totalTrialValue.toLocaleString()}
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -124,10 +136,17 @@ const Index = () => {
               <Plus className="h-4 w-4 text-blue-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">{subscriptions.length}</div>
+              <div className="text-2xl font-bold text-white">{paidSubscriptions.length}</div>
               <p className="text-xs text-slate-300">
-                アクティブなサブスク
+                有料サブスク
               </p>
+              {trialSubscriptions.length > 0 && (
+                <div className="mt-2 pt-2 border-t border-white/20">
+                  <p className="text-xs text-blue-300">
+                    無料トライアル: {trialSubscriptions.length}件
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
