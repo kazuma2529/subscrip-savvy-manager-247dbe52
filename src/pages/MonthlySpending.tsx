@@ -64,7 +64,7 @@ const MonthlySpending = () => {
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
             <Link to="/">
-              <Button variant="outline" size="sm" className="text-white border-white/30 hover:bg-white/10">
+              <Button variant="outline" size="sm" className="text-black bg-white border-white/30 hover:bg-white/90">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 戻る
               </Button>
@@ -246,14 +246,16 @@ const MonthlySpending = () => {
                         </div>
                       ))}
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setSelectedMonth(null)}
-                      className="w-full mt-4 text-white border-white/30 hover:bg-white/10"
-                    >
-                      選択解除
-                    </Button>
+                    <div className="flex justify-center">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSelectedMonth(null)}
+                        className="text-black bg-white border-white/30 hover:bg-white/90 px-4"
+                      >
+                        選択解除
+                      </Button>
+                    </div>
                   </div>
                 ) : (
                   <p className="text-slate-300 text-center py-8">
