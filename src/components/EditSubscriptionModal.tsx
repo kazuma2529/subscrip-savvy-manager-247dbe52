@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,15 +11,32 @@ import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 
-interface AddSubscriptionModalProps {
+interface Subscription {
+  id: number | string;
+  name: string;
+  price: number;
+  category: string;
+  cardName: string;
+  nextPayment: string;
+  isTrialPeriod?: boolean;
+  trialEndDate?: string;
+}
+
+interface EditSubscriptionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (subscription: any) => void;
+  onSave: (id: string | number, updates: any) => void;
+  subscription: Subscription | null;
 }
 
 const categories = ['AI', '音楽', '趣味', 'ビジネス', 'エンタメ', '英語', 'その他'];
 
-const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ isOpen, onClose, onAdd }) => {
+const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({ 
+  isOpen, 
+  onClose, 
+  onSave, 
+  subscription 
+}) => {
   const [formData, setFormData] = useState({
     name: '',
     price: '',
@@ -30,26 +47,45 @@ const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ isOpen, onC
     trialEndDate: undefined as Date | undefined,
   });
 
+  // モーダルが開いたときにサブスクリプションデータをフォームに設定
+  useEffect(() => {
+    if (subscription && isOpen) {
+      setFormData({
+        name: subscription.name,
+        price: subscription.price.toString(),
+        category: subscription.category,
+        cardName: subscription.cardName,
+        subscriptionType: subscription.isTrialPeriod ? 'trial' : 'normal',
+        nextPayment: subscription.nextPayment ? new Date(subscription.nextPayment) : undefined,
+        trialEndDate: subscription.trialEndDate ? new Date(subscription.trialEndDate) : undefined,
+      });
+    }
+  }, [subscription, isOpen]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    const subscription = {
+    if (!subscription) return;
+
+    const updates = {
       name: formData.name,
       price: parseInt(formData.price),
       category: formData.category,
-      cardName: formData.cardName,
-      isTrialPeriod: formData.subscriptionType === 'trial',
-      nextPayment: formData.subscriptionType === 'trial' 
-        ? (formData.trialEndDate ? format(formData.trialEndDate, 'yyyy-MM-dd') : format(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd')) // トライアル期間中はトライアル終了日、未選択なら1週間後
-        : (formData.nextPayment ? format(formData.nextPayment, 'yyyy-MM-dd') : format(getDefaultDate(), 'yyyy-MM-dd')),
-      trialEndDate: formData.subscriptionType === 'trial' && formData.trialEndDate 
+      card_name: formData.cardName,
+      is_trial_period: formData.subscriptionType === 'trial',
+      next_payment: formData.nextPayment ? format(formData.nextPayment, 'yyyy-MM-dd') : subscription.nextPayment,
+      trial_end_date: formData.subscriptionType === 'trial' && formData.trialEndDate 
         ? format(formData.trialEndDate, 'yyyy-MM-dd') 
-        : undefined,
+        : null,
     };
     
-    onAdd(subscription);
-    
-    // Reset form
+    onSave(subscription.id, updates);
+    onClose();
+  };
+
+  const handleClose = () => {
+    onClose();
+    // フォームをリセット
     setFormData({
       name: '',
       price: '',
@@ -61,24 +97,20 @@ const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ isOpen, onC
     });
   };
 
-  const getDefaultDate = () => {
-    const date = new Date();
-    date.setMonth(date.getMonth() + 1);
-    return date;
-  };
+  if (!subscription) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[425px] bg-slate-800 border-slate-700">
         <DialogHeader>
-          <DialogTitle className="text-white">新しいサブスクを追加</DialogTitle>
+          <DialogTitle className="text-white">サブスクリプションを編集</DialogTitle>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-white">サービス名</Label>
+            <Label htmlFor="edit-name" className="text-white">サービス名</Label>
             <Input
-              id="name"
+              id="edit-name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="Netflix, ChatGPT Plus など"
@@ -88,9 +120,9 @@ const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ isOpen, onC
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="price" className="text-white">月額料金 (円)</Label>
+            <Label htmlFor="edit-price" className="text-white">月額料金 (円)</Label>
             <Input
-              id="price"
+              id="edit-price"
               type="number"
               value={formData.price}
               onChange={(e) => setFormData({ ...formData, price: e.target.value })}
@@ -117,9 +149,9 @@ const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ isOpen, onC
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="cardName" className="text-white">使用カード名</Label>
+            <Label htmlFor="edit-cardName" className="text-white">使用カード名</Label>
             <Input
-              id="cardName"
+              id="edit-cardName"
               value={formData.cardName}
               onChange={(e) => setFormData({ ...formData, cardName: e.target.value })}
               placeholder="my fav card, 予備カード など"
@@ -135,12 +167,12 @@ const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ isOpen, onC
               onValueChange={(value) => setFormData({ ...formData, subscriptionType: value })}
             >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="normal" id="normal" className="border-slate-400" />
-                <Label htmlFor="normal" className="text-white">通常サブスク</Label>
+                <RadioGroupItem value="normal" id="edit-normal" className="border-slate-400" />
+                <Label htmlFor="edit-normal" className="text-white">通常サブスク</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="trial" id="trial" className="border-slate-400" />
-                <Label htmlFor="trial" className="text-white">無料トライアル中</Label>
+                <RadioGroupItem value="trial" id="edit-trial" className="border-slate-400" />
+                <Label htmlFor="edit-trial" className="text-white">無料トライアル中</Label>
               </div>
             </RadioGroup>
           </div>
@@ -179,15 +211,14 @@ const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ isOpen, onC
                     className="w-full justify-start text-left bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formData.nextPayment ? format(formData.nextPayment, 'yyyy年MM月dd日', { locale: ja }) : '日付を選択 (デフォルト: 1ヶ月後)'}
+                    {formData.nextPayment ? format(formData.nextPayment, 'yyyy年MM月dd日', { locale: ja }) : '日付を選択'}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0 bg-slate-700 border-slate-600">
                   <Calendar
                     mode="single"
-                    selected={formData.nextPayment || getDefaultDate()}
+                    selected={formData.nextPayment}
                     onSelect={(date) => setFormData({ ...formData, nextPayment: date })}
-                    defaultMonth={getDefaultDate()}
                     initialFocus
                     className="text-white"
                   />
@@ -200,16 +231,16 @@ const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ isOpen, onC
             <Button 
               type="button" 
               variant="outline" 
-              onClick={onClose}
-              className="flex-1 border-slate-600 text-gray-800 hover:bg-slate-700 hover:text-gray-800 bg-white"
+              onClick={handleClose}
+              className="flex-1 bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
             >
               キャンセル
             </Button>
             <Button 
               type="submit"
-              className="flex-1 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+              className="flex-1 bg-purple-600 hover:bg-purple-700 text-white"
             >
-              追加
+              保存
             </Button>
           </div>
         </form>
@@ -218,4 +249,4 @@ const AddSubscriptionModal: React.FC<AddSubscriptionModalProps> = ({ isOpen, onC
   );
 };
 
-export default AddSubscriptionModal;
+export default EditSubscriptionModal;

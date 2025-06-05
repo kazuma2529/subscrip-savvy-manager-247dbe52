@@ -9,7 +9,130 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      payment_history: {
+        Row: {
+          id: string
+          subscription_id: string
+          user_id: string
+          amount: number
+          payment_date: string
+          category: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          subscription_id: string
+          user_id: string
+          amount: number
+          payment_date: string
+          category: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          subscription_id?: string
+          user_id?: string
+          amount?: number
+          payment_date?: string
+          category?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_history_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      profiles: {
+        Row: {
+          id: string
+          email: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id: string
+          email?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          email?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      subscriptions: {
+        Row: {
+          id: string
+          user_id: string
+          name: string
+          price: number
+          category: string
+          card_name: string | null
+          is_trial_period: boolean
+          trial_end_date: string | null
+          next_payment: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name: string
+          price: number
+          category: string
+          card_name?: string | null
+          is_trial_period?: boolean
+          trial_end_date?: string | null
+          next_payment: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          name?: string
+          price?: number
+          category?: string
+          card_name?: string | null
+          is_trial_period?: boolean
+          trial_end_date?: string | null
+          next_payment?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
