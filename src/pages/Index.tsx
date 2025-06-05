@@ -59,6 +59,18 @@ const Index = () => {
   const totalMonthlySpend = paidSubscriptions.reduce((total, sub) => total + sub.price, 0);
   const totalTrialValue = trialSubscriptions.reduce((total, sub) => total + sub.price, 0);
 
+  // サブスクリプションを支払い予定日が近い順に並べ、無料トライアルを後ろに配置
+  const sortedSubscriptions = [...filteredSubscriptions].sort((a, b) => {
+    // 無料トライアルでないものを優先
+    if (a.isTrialPeriod && !b.isTrialPeriod) return 1;
+    if (!a.isTrialPeriod && b.isTrialPeriod) return -1;
+    
+    // 同じタイプ内では支払い予定日が近い順
+    const dateA = new Date(a.nextPayment);
+    const dateB = new Date(b.nextPayment);
+    return dateA.getTime() - dateB.getTime();
+  });
+
   const upcomingAlerts = subscriptions.filter(sub => {
     const today = new Date();
     const paymentDate = new Date(sub.nextPayment);
@@ -85,7 +97,7 @@ const Index = () => {
         </div>
 
         {/* Alerts */}
-        {upcomingAlerts.length > 0 && (
+        {upcomingAlerts.length > 0 && upcomingAlerts.slice(0, 3).length > 0 && (
           <Card className="mb-6 border-orange-500 bg-orange-50">
             <CardHeader>
               <CardTitle className="flex items-center text-orange-800">
@@ -95,10 +107,10 @@ const Index = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                {upcomingAlerts.map(sub => (
-                  <div key={sub.id} className="flex items-center justify-between">
-                    <span className="text-orange-700">{sub.name}</span>
-                    <Badge variant="outline" className="text-orange-600 border-orange-300">
+                {upcomingAlerts.slice(0, 3).map(sub => (
+                  <div key={sub.id} className="flex items-center justify-between p-3 rounded-lg border-2 border-orange-300 bg-orange-100">
+                    <span className="text-orange-800 font-medium">{sub.name}</span>
+                    <Badge variant="outline" className="text-orange-700 border-orange-400 bg-white">
                       {sub.nextPayment}
                     </Badge>
                   </div>
@@ -193,13 +205,13 @@ const Index = () => {
               )}
             </h2>
             <div className="grid gap-4">
-              {filteredSubscriptions.map(subscription => (
+              {sortedSubscriptions.map(subscription => (
                 <SubscriptionCard 
                   key={subscription.id} 
                   subscription={subscription}
                 />
               ))}
-              {filteredSubscriptions.length === 0 && (
+              {sortedSubscriptions.length === 0 && (
                 <Card className="bg-white/5 backdrop-blur-lg border-white/20">
                   <CardContent className="p-6 text-center">
                     <p className="text-slate-300">このカテゴリにサブスクはありません</p>
@@ -211,7 +223,7 @@ const Index = () => {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            <MonthlySpendingChart subscriptions={subscriptions} />
+            <MonthlySpendingChart subscriptions={paidSubscriptions} />
             <UpcomingPayments subscriptions={subscriptions} />
           </div>
         </div>
