@@ -70,71 +70,96 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
 
   return (
     <>
-      <Card className={`bg-white/10 backdrop-blur-lg border-white/20 hover:bg-white/15 transition-all duration-200 ${isUrgent ? 'ring-2 ring-orange-400' : ''}`}>
-        <CardContent className="p-6">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
-                <div className={`w-3 h-3 rounded-full ${getCategoryColor(category)}`}></div>
-                <h3 className="text-lg font-semibold text-white">{name}</h3>
-                {isTrialPeriod && (
-                  <Badge variant="outline" className="text-xs bg-blue-500/20 text-blue-300 border-blue-400">
-                    無料トライアル
-                  </Badge>
-                )}
+      <Card className="bg-white/10 backdrop-blur-lg border-white/20 p-3 md:p-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+          {/* モバイル: サービス名を上、価格と日付を下に表示 */}
+          <div className="mb-2 md:hidden">
+            <div className="flex items-center gap-2 mb-2">
+              <div className={`w-3 h-3 rounded-full ${getCategoryColor(subscription.category)}`}></div>
+              <h3 className="text-base font-semibold text-white truncate">
+                {subscription.name}
+              </h3>
+              {subscription.isTrialPeriod && (
+                <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30 text-xs">
+                  トライアル
+                </Badge>
+              )}
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="text-lg font-bold text-white">
+                ¥{subscription.price.toLocaleString()}
               </div>
-              
-              <div className="space-y-1 mb-3">
-                <p className="text-2xl font-bold text-white">¥{price.toLocaleString()}</p>
-                <p className="text-sm text-slate-300">月額</p>
-              </div>
-              
-              <div className="flex flex-wrap gap-2 text-sm text-slate-300">
-                <span>カード: {cardName}</span>
-                <span>•</span>
-                <span>カテゴリ: {category}</span>
-              </div>
-              
-              <div className="mt-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-slate-300">
-                    {isTrialPeriod ? 'トライアル終了日:' : '次回支払い:'}
-                  </span>
-                  <Badge 
-                    variant={isUrgent ? "destructive" : "outline"}
-                    className={isUrgent ? "bg-orange-500 text-white" : "text-slate-300 border-slate-600"}
-                  >
-                    {displayDate}
-                  </Badge>
-                  {daysUntilPayment > 0 && (
-                    <span className={`text-xs ${isUrgent ? 'text-orange-300' : 'text-slate-400'}`}>
-                      (あと{daysUntilPayment}日)
-                    </span>
-                  )}
+              <div className="text-right">
+                <div className="text-xs text-slate-300">
+                  次回支払い{subscription.isTrialPeriod ? '(トライアル終了)' : ''}まで
+                </div>
+                <div className="text-sm font-semibold text-blue-300">
+                  あと{daysUntilPayment}日
                 </div>
               </div>
             </div>
-            
-            <div className="flex gap-2 ml-4">
-              <Button 
-                size="sm" 
-                variant="ghost" 
-                className="text-slate-300 hover:text-white hover:bg-white/10"
-                onClick={handleEdit}
-              >
-                <Edit className="w-4 h-4" />
-              </Button>
-              <Button 
-                size="sm" 
-                variant="ghost" 
-                className="text-slate-300 hover:text-red-400 hover:bg-red-500/10"
-                onClick={() => setShowDeleteDialog(true)}
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
+            <div className="flex flex-wrap gap-1 text-xs text-slate-300 mt-1">
+              <span>カード: {subscription.cardName}</span>
+              <span>•</span>
+              <span>カテゴリ: {subscription.category}</span>
             </div>
           </div>
-        </CardContent>
+
+          <div className="flex-1 mb-2 md:mb-0 hidden md:block">
+            <div className="flex items-center gap-2 mb-1 md:mb-2">
+              <div className={`w-3 h-3 rounded-full ${getCategoryColor(subscription.category)}`}></div>
+              <h3 className="text-base md:text-xl font-semibold text-white truncate">
+                {subscription.name}
+              </h3>
+              {subscription.isTrialPeriod && (
+                <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30 text-xs md:text-sm">
+                  トライアル
+                </Badge>
+              )}
+            </div>
+            <div className="flex flex-wrap gap-1 md:gap-2 text-xs md:text-sm text-slate-300">
+              <span>カード: {subscription.cardName}</span>
+              <span>•</span>
+              <span>カテゴリ: {subscription.category}</span>
+            </div>
+          </div>
+
+          {/* デスクトップ: 右側に価格と日付を表示 */}
+          <div className="hidden md:flex md:flex-col md:items-end md:mr-4">
+            <div className="text-2xl font-bold text-white mb-1">
+              ¥{subscription.price.toLocaleString()}
+            </div>
+            <div className="text-right">
+              <div className="text-sm text-slate-300">
+                次回支払い{subscription.isTrialPeriod ? '(トライアル終了)' : ''}まで
+              </div>
+              <div className="text-lg font-semibold text-blue-300">
+                あと{daysUntilPayment}日
+              </div>
+            </div>
+          </div>
+
+          <div className="flex gap-2 mt-2 md:mt-0">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleEdit}
+              className="flex-1 md:flex-none h-8 md:h-10 px-2 md:px-4 text-xs md:text-sm text-white hover:bg-white/10 border border-white/20"
+            >
+              <Edit className="h-3 w-3 md:h-4 md:w-4 md:mr-2" />
+              <span className="md:inline">編集</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowDeleteDialog(true)}
+              className="flex-1 md:flex-none h-8 md:h-10 px-2 md:px-4 text-xs md:text-sm text-red-300 hover:bg-red-500/10 border border-red-500/20"
+            >
+              <Trash2 className="h-3 w-3 md:h-4 md:w-4 md:mr-2" />
+              <span className="md:inline">削除</span>
+            </Button>
+          </div>
+        </div>
       </Card>
 
       {/* 削除確認ダイアログ */}

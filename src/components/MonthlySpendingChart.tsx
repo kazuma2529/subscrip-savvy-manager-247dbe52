@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
@@ -47,19 +46,19 @@ const MonthlySpendingChart: React.FC<MonthlySpendingChartProps> = ({ subscriptio
 
   return (
     <Card className="bg-white/10 backdrop-blur-lg border-white/20">
-      <CardHeader>
+      <CardHeader className="pb-2 md:pb-6">
         <CardTitle className="text-white">月額支出内訳</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="h-64">
+      <CardContent className="pt-0 md:pt-6">
+        <div className="h-48 md:h-64">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={chartData}
                 cx="50%"
                 cy="50%"
-                innerRadius={40}
-                outerRadius={80}
+                innerRadius={30}
+                outerRadius={60}
                 paddingAngle={5}
                 dataKey="value"
               >
@@ -80,7 +79,7 @@ const MonthlySpendingChart: React.FC<MonthlySpendingChartProps> = ({ subscriptio
           </ResponsiveContainer>
         </div>
         
-        <div className="mt-4 space-y-2">
+        <div className="mt-2 md:mt-4 space-y-2">
           {chartData.map((item) => (
             <div key={item.name} className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -97,7 +96,7 @@ const MonthlySpendingChart: React.FC<MonthlySpendingChartProps> = ({ subscriptio
           ))}
         </div>
         
-        <div className="mt-4 pt-4 border-t border-white/20">
+        <div className="mt-2 md:mt-4 pt-2 md:pt-4 border-t border-white/20">
           <div className="flex justify-between items-center">
             <span className="text-white font-semibold">合計</span>
             <span className="text-lg font-bold text-white">
