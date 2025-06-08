@@ -190,18 +190,18 @@ const Index = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
-          <Card className="bg-white/10 backdrop-blur-lg border-white/20 h-32 md:h-48 flex flex-col">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <Card className="bg-white/10 backdrop-blur-lg border-white/20 min-h-[140px] md:h-48 flex flex-col">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
               <CardTitle className="text-sm font-medium text-white">月額合計</CardTitle>
               <CreditCard className="h-4 w-4 text-purple-400" />
             </CardHeader>
-            <CardContent className="flex-1 flex flex-col justify-center">
-              <div className="text-xl md:text-2xl font-bold text-white">¥{totalMonthlySpend.toLocaleString()}</div>
-              <p className="text-xs text-slate-300">
+            <CardContent className="flex-1 flex flex-col justify-center pt-0">
+              <div className="text-xl md:text-2xl font-bold text-white mb-1">¥{totalMonthlySpend.toLocaleString()}</div>
+              <p className="text-xs text-slate-300 mb-2">
                 年額 ¥{(totalMonthlySpend * 12).toLocaleString()}
               </p>
               {trialSubscriptions.length > 0 && (
-                <div className="mt-2 pt-2 border-t border-white/20">
+                <div className="mt-auto pt-2 border-t border-white/20">
                   <p className="text-xs text-blue-300">
                     無料トライアル: ¥{totalTrialValue.toLocaleString()}
                   </p>
@@ -210,18 +210,18 @@ const Index = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/10 backdrop-blur-lg border-white/20 h-32 md:h-48 flex flex-col">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <Card className="bg-white/10 backdrop-blur-lg border-white/20 min-h-[140px] md:h-48 flex flex-col">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
               <CardTitle className="text-sm font-medium text-white">登録サービス数</CardTitle>
               <Plus className="h-4 w-4 text-blue-400" />
             </CardHeader>
-            <CardContent className="flex-1 flex flex-col justify-center">
-              <div className="text-xl md:text-2xl font-bold text-white">{paidSubscriptions.length}</div>
-              <p className="text-xs text-slate-300">
+            <CardContent className="flex-1 flex flex-col justify-center pt-0">
+              <div className="text-xl md:text-2xl font-bold text-white mb-1">{paidSubscriptions.length}</div>
+              <p className="text-xs text-slate-300 mb-2">
                 有料サブスク
               </p>
               {trialSubscriptions.length > 0 && (
-                <div className="mt-2 pt-2 border-t border-white/20">
+                <div className="mt-auto pt-2 border-t border-white/20">
                   <p className="text-xs text-blue-300">
                     無料トライアル: {trialSubscriptions.length}件
                   </p>

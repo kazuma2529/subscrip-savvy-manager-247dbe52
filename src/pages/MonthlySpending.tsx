@@ -188,21 +188,26 @@ const MonthlySpending = () => {
                     <CardTitle className="text-white">月別支出推移</CardTitle>
                     <p className="text-slate-300 text-sm">月をクリックすると詳細な内訳を表示します</p>
                   </CardHeader>
-                  <CardContent>
-                    <ChartContainer config={chartConfig} className="h-80">
+                  <CardContent className="p-3 md:p-6">
+                    <ChartContainer config={chartConfig} className="h-64 md:h-80 w-full">
                       <ResponsiveContainer width="100%" height="100%">
                         {chartType === 'bar' ? (
-                          <BarChart data={chartData}>
+                          <BarChart data={chartData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
                             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
                             <XAxis 
                               dataKey="monthName" 
-                              tick={{ fill: 'white', fontSize: 12 }}
+                              tick={{ fill: 'white', fontSize: 10 }}
                               axisLine={{ stroke: 'rgba(255,255,255,0.3)' }}
+                              interval={0}
+                              angle={-45}
+                              textAnchor="end"
+                              height={60}
                             />
                             <YAxis 
-                              tick={{ fill: 'white', fontSize: 12 }}
+                              tick={{ fill: 'white', fontSize: 10 }}
                               axisLine={{ stroke: 'rgba(255,255,255,0.3)' }}
-                              tickFormatter={(value) => `¥${value.toLocaleString()}`}
+                              tickFormatter={(value) => `¥${(value / 1000).toFixed(0)}k`}
+                              width={50}
                             />
                             <ChartTooltip 
                               content={<ChartTooltipContent />}
@@ -217,17 +222,22 @@ const MonthlySpending = () => {
                             />
                           </BarChart>
                         ) : (
-                          <LineChart data={chartData}>
+                          <LineChart data={chartData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
                             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
                             <XAxis 
                               dataKey="monthName" 
-                              tick={{ fill: 'white', fontSize: 12 }}
+                              tick={{ fill: 'white', fontSize: 10 }}
                               axisLine={{ stroke: 'rgba(255,255,255,0.3)' }}
+                              interval={0}
+                              angle={-45}
+                              textAnchor="end"
+                              height={60}
                             />
                             <YAxis 
-                              tick={{ fill: 'white', fontSize: 12 }}
+                              tick={{ fill: 'white', fontSize: 10 }}
                               axisLine={{ stroke: 'rgba(255,255,255,0.3)' }}
-                              tickFormatter={(value) => `¥${value.toLocaleString()}`}
+                              tickFormatter={(value) => `¥${(value / 1000).toFixed(0)}k`}
+                              width={50}
                             />
                             <ChartTooltip 
                               content={<ChartTooltipContent />}
@@ -237,9 +247,9 @@ const MonthlySpending = () => {
                               type="monotone" 
                               dataKey="total" 
                               stroke="#8b5cf6" 
-                              strokeWidth={3}
-                              dot={{ fill: '#8b5cf6', strokeWidth: 2, r: 6 }}
-                              activeDot={{ r: 8, stroke: '#8b5cf6' }}
+                              strokeWidth={2}
+                              dot={{ fill: '#8b5cf6', strokeWidth: 1, r: 4 }}
+                              activeDot={{ r: 6, stroke: '#8b5cf6' }}
                             />
                           </LineChart>
                         )}
