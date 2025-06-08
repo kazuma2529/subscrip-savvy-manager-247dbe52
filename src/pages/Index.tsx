@@ -147,6 +147,12 @@ const Index = () => {
                 月別支出分析
               </Button>
             </Link>
+            <Link to="/notification-settings">
+              <Button variant="outline" className="text-white border-white/30 hover:bg-white/10">
+                <Bell className="w-4 h-4 mr-2" />
+                通知設定
+              </Button>
+            </Link>
             <Button
               onClick={handleSignOut}
               variant="outline"

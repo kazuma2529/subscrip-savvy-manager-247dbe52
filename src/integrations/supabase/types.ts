@@ -9,6 +9,107 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      notification_history: {
+        Row: {
+          id: string
+          user_id: string
+          subscription_id: string
+          notification_type: string
+          days_before: number
+          sent_at: string
+          email_address: string
+          subject: string
+          status: string
+          error_message: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          subscription_id: string
+          notification_type: string
+          days_before: number
+          sent_at?: string
+          email_address: string
+          subject: string
+          status?: string
+          error_message?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          subscription_id?: string
+          notification_type?: string
+          days_before?: number
+          sent_at?: string
+          email_address?: string
+          subject?: string
+          status?: string
+          error_message?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_history_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      notification_settings: {
+        Row: {
+          id: string
+          user_id: string
+          email_notifications_enabled: boolean
+          trial_notification_days: number[]
+          payment_notification_days: number[]
+          notification_time: string
+          timezone: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          email_notifications_enabled?: boolean
+          trial_notification_days?: number[]
+          payment_notification_days?: number[]
+          notification_time?: string
+          timezone?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          email_notifications_enabled?: boolean
+          trial_notification_days?: number[]
+          payment_notification_days?: number[]
+          notification_time?: string
+          timezone?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_settings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       payment_history: {
         Row: {
           id: string

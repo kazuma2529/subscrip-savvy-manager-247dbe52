@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import PrivateRoute from "./components/PrivateRoute";
 import Index from "./pages/Index";
 import MonthlySpending from "./pages/MonthlySpending";
+import NotificationSettings from "./pages/NotificationSettings";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -31,6 +32,11 @@ const AppRoutes = () => {
       <Route path="/monthly-spending" element={
         <PrivateRoute>
           <MonthlySpending />
+        </PrivateRoute>
+      } />
+      <Route path="/notification-settings" element={
+        <PrivateRoute>
+          <NotificationSettings />
         </PrivateRoute>
       } />
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
