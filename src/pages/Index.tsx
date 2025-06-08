@@ -148,7 +148,7 @@ const Index = () => {
               </Button>
             </Link>
             <Link to="/notification-settings">
-              <Button variant="outline" className="text-white border-white/30 hover:bg-white/10">
+              <Button variant="outline" className="text-black bg-white border-white/30 hover:bg-white/90 hover:text-black">
                 <Bell className="w-4 h-4 mr-2" />
                 通知設定
               </Button>

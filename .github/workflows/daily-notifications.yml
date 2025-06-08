@@ -1,8 +1,8 @@
 name: Daily Email Notifications
 on:
   schedule:
-    - cron: '0 12 * * *'  # UTC 12:00 = JST 21:00
-  workflow_dispatch:  # 手動実行も可能
+    - cron: "0 12 * * *" # UTC 12:00 = JST 21:00
+  workflow_dispatch: # 手動実行も可能
 
 jobs:
   trigger-notifications:
@@ -12,4 +12,5 @@ jobs:
         run: |
           curl -X POST \
             -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
-            https://your-project-ref.supabase.co/functions/v1/daily-notification-scheduler
+            -H "Content-Type: application/json" \
+            "${{ secrets.SUPABASE_URL }}/functions/v1/daily-notification-scheduler"
