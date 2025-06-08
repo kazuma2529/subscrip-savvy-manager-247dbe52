@@ -132,23 +132,23 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-4 md:py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-4xl font-bold text-white mb-2">SubMemo</h1>
-            <p className="text-slate-300">あなたのサブスクリプションを一元管理</p>
+        <div className="flex flex-col gap-4 mb-6 md:mb-8 md:flex-row md:items-center md:justify-between">
+          <div className="text-center md:text-left">
+            <h1 className="text-2xl md:text-4xl font-bold text-white mb-1 md:mb-2">SubMemo</h1>
+            <p className="text-sm md:text-base text-slate-300">あなたのサブスクリプションを一元管理</p>
             <p className="text-xs text-slate-400 mt-1">ログイン中: {user?.email}</p>
           </div>
-          <div className="flex gap-3">
-            <Link to="/monthly-spending">
-              <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold">
+          <div className="flex flex-col gap-2 md:flex-row md:gap-3">
+            <Link to="/monthly-spending" className="w-full md:w-auto">
+              <Button className="w-full md:w-auto bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold h-12 md:h-auto">
                 <BarChart3 className="w-4 h-4 mr-2" />
                 月別支出分析
               </Button>
             </Link>
-            <Link to="/notification-settings">
-              <Button variant="outline" className="text-black bg-white border-white/30 hover:bg-white/90 hover:text-black">
+            <Link to="/notification-settings" className="w-full md:w-auto">
+              <Button variant="outline" className="w-full md:w-auto text-black bg-white border-white/30 hover:bg-white/90 hover:text-black h-12 md:h-auto">
                 <Bell className="w-4 h-4 mr-2" />
                 通知設定
               </Button>
@@ -156,7 +156,7 @@ const Index = () => {
             <Button
               onClick={handleSignOut}
               variant="outline"
-              className="text-black bg-white border-white/30 hover:bg-white/90 hover:text-black"
+              className="w-full md:w-auto text-black bg-white border-white/30 hover:bg-white/90 hover:text-black h-12 md:h-auto"
             >
               <LogOut className="w-4 h-4 mr-2" />
               ログアウト
@@ -189,14 +189,14 @@ const Index = () => {
         )}
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="bg-white/10 backdrop-blur-lg border-white/20 h-48 flex flex-col">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
+          <Card className="bg-white/10 backdrop-blur-lg border-white/20 h-32 md:h-48 flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-white">月額合計</CardTitle>
               <CreditCard className="h-4 w-4 text-purple-400" />
             </CardHeader>
             <CardContent className="flex-1 flex flex-col justify-center">
-              <div className="text-2xl font-bold text-white">¥{totalMonthlySpend.toLocaleString()}</div>
+              <div className="text-xl md:text-2xl font-bold text-white">¥{totalMonthlySpend.toLocaleString()}</div>
               <p className="text-xs text-slate-300">
                 年額 ¥{(totalMonthlySpend * 12).toLocaleString()}
               </p>
@@ -210,13 +210,13 @@ const Index = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/10 backdrop-blur-lg border-white/20 h-48 flex flex-col">
+          <Card className="bg-white/10 backdrop-blur-lg border-white/20 h-32 md:h-48 flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-white">登録サービス数</CardTitle>
               <Plus className="h-4 w-4 text-blue-400" />
             </CardHeader>
             <CardContent className="flex-1 flex flex-col justify-center">
-              <div className="text-2xl font-bold text-white">{paidSubscriptions.length}</div>
+              <div className="text-xl md:text-2xl font-bold text-white">{paidSubscriptions.length}</div>
               <p className="text-xs text-slate-300">
                 有料サブスク
               </p>
@@ -230,11 +230,13 @@ const Index = () => {
             </CardContent>
           </Card>
 
-          <CalendarView subscriptions={displaySubscriptions} />
+          <div className="md:col-span-2 xl:col-span-1">
+            <CalendarView subscriptions={displaySubscriptions} />
+          </div>
         </div>
 
         {/* Category Filter and Add Button */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+        <div className="flex flex-col gap-4 mb-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-wrap gap-2">
             {categories.map(category => (
               <Button
@@ -242,10 +244,10 @@ const Index = () => {
                 variant={selectedCategory === category ? "default" : "outline"}
                 size="sm"
                 onClick={() => setSelectedCategory(category)}
-                className={selectedCategory === category 
+                className={`h-10 px-3 text-sm ${selectedCategory === category 
                   ? "bg-purple-500 hover:bg-purple-600 text-white" 
                   : "text-black border-white/30 hover:bg-white/10 hover:text-white bg-white"
-                }
+                }`}
               >
                 {category}
               </Button>
@@ -253,7 +255,7 @@ const Index = () => {
           </div>
           <Button 
             onClick={() => setIsModalOpen(true)}
-            className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-semibold lg:ml-4"
+            className="w-full lg:w-auto bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-semibold h-12 lg:h-auto lg:ml-4"
           >
             <Plus className="w-4 h-4 mr-2" />
             新規登録
@@ -261,13 +263,13 @@ const Index = () => {
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           {/* Subscriptions List */}
-          <div className="lg:col-span-2">
-            <h2 className="text-2xl font-semibold text-white mb-4">
+          <div className="xl:col-span-2">
+            <h2 className="text-xl md:text-2xl font-semibold text-white mb-4">
               サブスクリプション一覧
               {selectedCategory !== 'すべて' && (
-                <span className="text-lg text-slate-300 ml-2">({selectedCategory})</span>
+                <span className="text-base md:text-lg text-slate-300 ml-2">({selectedCategory})</span>
               )}
             </h2>
             <div className="grid gap-4">
@@ -295,7 +297,7 @@ const Index = () => {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-6 xl:block">
             <MonthlySpendingChart subscriptions={paidSubscriptions} />
             <UpcomingPayments subscriptions={displaySubscriptions} />
           </div>
